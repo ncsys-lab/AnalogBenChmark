@@ -13,14 +13,14 @@ class Charge_Pump_Generator:
     
         charge_pump = blocklib.AMSBlock('charge_pump')
 
-        up_param   = charge_pump.decl_param('up_current_param',   Constant(20e-6))
-        down_param = charge_pump.decl_param('down_current_param', Constant(20e-6))
+        up_param   = charge_pump.decl_param('up_current_param',   Constant(20e-5))
+        down_param = charge_pump.decl_param('down_current_param', Constant(20e-5))
 
         input_up_digital   = charge_pump.decl_var('input_up_digital',   blocklib.VarKind.Input, DigitalType(1))
         input_down_digital = charge_pump.decl_var('input_down_digital', blocklib.VarKind.Input, DigitalType(1))
         
         output_current_real = charge_pump.decl_var('output_current_real', blocklib.VarKind.Output, \
-                                                   intervallib.real_type_from_expr(charge_pump, input_up_digital * up_param - input_down_digital * down_param) )
+                                                   intervallib.real_type_from_expr(charge_pump, Constant(input_voltage) * input_up_digital * up_param - Constant(input_voltage) * input_down_digital * down_param) )
 
         Charge_Pump_Generator.output_current_real_type = output_current_real.type
         charge_pump.decl_relation(VarAssign(output_current_real, up_param * input_up_digital + down_param * input_down_digital))
