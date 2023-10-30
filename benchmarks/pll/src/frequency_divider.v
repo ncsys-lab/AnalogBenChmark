@@ -1,5 +1,5 @@
 module frequency_divider #(
-    DIVISION = 2
+    DIVISION = 1
 )
 (
     input  logic input_clk_digital,
@@ -17,9 +17,11 @@ always @(posedge input_clk_digital) begin
     else counter <= 0;
 end
 
-always @(*) begin // We want a latch in this case
-    if(reset) output_clk_digital = 0;
-    else if(counter == DIVISION) output_clk_digital = !output_clk_digital;
+/*verilator lint_off COMBDLY*/
+always @(posedge input_clk_digital) begin // We want a latch in this case
+    if(reset) output_clk_digital <= 0;
+    else if(counter == DIVISION) output_clk_digital <= !output_clk_digital;
 end
+/*verilator lint_on COMBDLY*/
 
 endmodule

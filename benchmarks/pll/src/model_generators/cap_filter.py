@@ -10,7 +10,7 @@ class Loop_Filter_Generator:
     
     output_voltage_real_type = None
 
-    def generate_block(input_voltage = 3.3, rel_prec = 0.01, timestep = 1e-3):
+    def generate_block(input_voltage = 3.3, rel_prec = 0.01, timestep = 1e-2):
     
         loop_filter = blocklib.AMSBlock('loop_filter')
 
