@@ -4,7 +4,7 @@ import pythams.core.intervals as intervallib
 import pythams.core.fixedpoint as fxplib
 import pythams.core.integer as intlib 
 import pythams.core.rtl as rtllib
-import charge_pump
+from src.model_generators.charge_pump import Charge_Pump_Generator
 
 class Loop_Filter_Generator:
     
@@ -18,12 +18,12 @@ class Loop_Filter_Generator:
         C_two_param = loop_filter.decl_param('C_two', Constant(4e-14))
         R_param     = loop_filter.decl_param('R',     Constant(2e5))
 
-        input_current_real = loop_filter.decl_var('input_current_real', blocklib.VarKind.Input, charge_pump.Charge_Pump_Generator.output_current_real_type)
+        input_current_real = loop_filter.decl_var('input_current_real', blocklib.VarKind.Input, Charge_Pump_Generator.output_current_real_type)
         output_voltage_real = loop_filter.decl_var('output_voltage_real', blocklib.VarKind.Output, RealType(0, input_voltage, rel_prec))
 
         v_o = loop_filter.decl_var('v_o', blocklib.VarKind.StateVar, output_voltage_real.type)
 
-        i_r = loop_filter.decl_var('i_r', blocklib.VarKind.StateVar, charge_pump.Charge_Pump_Generator.output_current_real_type)
+        i_r = loop_filter.decl_var('i_r', blocklib.VarKind.StateVar, Charge_Pump_Generator.output_current_real_type)
 
         di_dt = loop_filter.decl_var('di_dt', blocklib.VarKind.Transient, \
                                      intervallib.real_type_from_expr(loop_filter, input_current_real * Constant(1 / R_param.value * C_two_param.value) -\

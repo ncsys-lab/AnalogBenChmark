@@ -14,14 +14,14 @@ class Loop_Filter_Generator:
     
         loop_filter = blocklib.AMSBlock('loop_filter')
 
-        C_one_param = loop_filter.decl_param('C_one', Constant(5e-13))
+        C_one_param = loop_filter.decl_param('C_one', Constant(2e-4))
         C_two_param = loop_filter.decl_param('C_two', Constant(4e-14))
-        R_param     = loop_filter.decl_param('R',     Constant(5e3))
+        R_param     = loop_filter.decl_param('R',     Constant(5210))
 
         input_current_real = loop_filter.decl_var('input_current_real', blocklib.VarKind.Input, charge_pump.Charge_Pump_Generator.output_current_real_type)
         output_voltage_real = loop_filter.decl_var('output_voltage_real', blocklib.VarKind.Output, RealType(0, input_voltage, rel_prec))
 
-        v_o = loop_filter.decl_var('v_o', blocklib.VarKind.StateVar, output_voltage_real.type)
+        v_o = loop_filter.decl_var('v_o', blocklib.VarKind.StateVar, RealType(-0.01, input_voltage, rel_prec))
 
         i_r = loop_filter.decl_var('i_r', blocklib.VarKind.StateVar, charge_pump.Charge_Pump_Generator.output_current_real_type)
 
@@ -42,7 +42,7 @@ if __name__ == "__main__":
     fp_block = fxplib.to_fixed_point(ival_reg,loop_filter)
     
     int_block = intlib.to_integer(fp_block)
-    print(fp_block._vars['output_voltage_real'])
+    print(int_block._vars['output_voltage_real'])
     print(int_block._vars['input_current_real'])
     rtl_block = rtllib.RTLBlock(int_block,{'v_o':0, 'i_r':0, 'int_i_r':0}, name_override = 'loop_filter')
 
