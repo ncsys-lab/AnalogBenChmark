@@ -4,8 +4,12 @@ import pythams.core.intervals as intervallib
 import pythams.core.fixedpoint as fxplib
 import pythams.core.integer as intlib 
 import pythams.core.rtl as rtllib
-from src.model_generators.charge_pump import Charge_Pump_Generator
 
+try:
+    from src.model_generators.charge_pump import Charge_Pump_Generator
+except:
+    from charge_pump import Charge_Pump_Generator
+    
 class Loop_Filter_Generator:
     
     output_voltage_real_type = None

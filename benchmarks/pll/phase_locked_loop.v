@@ -23,8 +23,8 @@ logic        output_down_digital;
 
 logic        feedback_div_clk_digital;
 
-logic [11:0] output_vco_real;
-assign output_clk_digital = ~output_vco_real[11];
+logic [30:0] output_vco_real;
+assign output_clk_digital = ~output_vco_real[30];
 
 charge_pump                  cpmp(.input_up_digital(output_up_digital),   
                                   .input_down_digital(output_down_digital), 

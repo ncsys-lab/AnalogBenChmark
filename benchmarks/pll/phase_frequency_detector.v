@@ -49,12 +49,12 @@ end
 
 /*
 //This file gets misinterpreted by verilator!
-always @(posedge input_reference_clock_digital) begin
+always @(posedge input_reference_clock_digital or posedge res) begin
     if(res) output_up_digital <= 0;
     else output_up_digital <= 1;
 end
 
-always @(posedge input_feedback_clock_digital) begin
+always @(posedge input_feedback_clock_digital or posedge res) begin
     if(res) output_down_digital <= 0;
     else output_down_digital <=1;
 end

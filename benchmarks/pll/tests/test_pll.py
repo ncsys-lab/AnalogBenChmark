@@ -6,7 +6,8 @@ from src.phased_locked_loop import phase_locked_loop
 def test_pll(cmdline_opts):
     multiplier = phase_locked_loop()
 
-    def generate_clk_test_vector(cycles = 20000, period = 1000):
+
+    def generate_clk_test_vector(cycles = 2000000, period = 60000):
         arr = []
         clk = 0
         for i in range(cycles):
