@@ -1,13 +1,13 @@
 import random
 from pymtl3 import *
 from pymtl3.stdlib.test_utils import run_test_vector_sim, config_model_with_cmdline_opts
-from src.phased_locked_loop import phase_locked_loop
+from pll.phased_locked_loop import phase_locked_loop
 
 def test_pll(cmdline_opts):
     multiplier = phase_locked_loop()
 
 
-    def generate_clk_test_vector(cycles = 2000000, period = 60000):
+    def generate_clk_test_vector(cycles = 20000000, period = 60000):
         arr = []
         clk = 0
         for i in range(cycles):

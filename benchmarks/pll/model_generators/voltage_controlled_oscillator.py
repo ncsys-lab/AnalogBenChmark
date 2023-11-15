@@ -9,7 +9,7 @@ import sys
 import copy
 
 try:
-    from src.model_generators.loop_filter import Loop_Filter_Generator
+    from pll.model_generators.loop_filter import Loop_Filter_Generator
 except:
     from loop_filter import Loop_Filter_Generator
 

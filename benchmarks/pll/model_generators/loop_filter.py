@@ -6,7 +6,7 @@ import pythams.core.integer as intlib
 import pythams.core.rtl as rtllib
 
 try:
-    from src.model_generators.charge_pump import Charge_Pump_Generator
+    from pll.model_generators.charge_pump import Charge_Pump_Generator
 except:
     from charge_pump import Charge_Pump_Generator
     
