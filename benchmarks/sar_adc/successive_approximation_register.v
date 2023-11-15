@@ -15,6 +15,10 @@ module successive_approximation_register #(
 
 logic [$clog2(N_BITS) - 1:0] counter;
 
+//need to double buffer the output becaues tecnically the SAR outputs a 1
+// for the bit under comparison
+logic[N_BITS - 1:0] quantized_voltage_register;
+
 always@(posedge clk) begin
     if(reset) begin
         counter <= 0;
@@ -26,9 +30,16 @@ end
 
 always@(posedge clk) begin
     if(reset || !conduct_comparison) begin
-        quantized_voltage <= 0;
+        quantized_voltage_register <= 0;
     end else begin 
-        quantized_voltage[N_BITS - counter - 1] <= feedback_value;
+        quantized_voltage_register[N_BITS - counter - 1] <= feedback_value;
+    end
+end
+
+always@(*) begin
+    int i;
+    for(i=0;i<N_BITS;i++) begin
+        quantized_voltage[i] = (N_BITS - counter - 1 == i) ? 1:quantized_voltage_register[i];
     end
 end
 

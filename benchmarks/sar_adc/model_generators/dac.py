@@ -16,7 +16,7 @@ class DACGenerator:
 
         dac = blocklib.AMSBlock("vco")
         
-        in_voltage_digital = dac.decl_var("input_voltage_digital", kind=blocklib.VarKind.Input, type=DigitalType(nbits=nbits))
+        in_voltage_digital = dac.decl_var("input_voltage_digital", kind=blocklib.VarKind.Input, type=DigitalType(nbits=nbits-1))
         out_voltage_real = dac.decl_var("output_voltage_real",kind=blocklib.VarKind.Output, type=RealType(lower=0,upper=3.3,prec=rel_prec))
         
         dac.decl_relation(VarAssign(out_voltage_real, Constant(voltage)*in_voltage_digital*Constant(1/2**nbits)))
