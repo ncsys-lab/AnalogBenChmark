@@ -19,6 +19,7 @@ module sar_adc
 
 
     input logic clk,
+    input logic sys_clk,
     input logic reset
 );
 
@@ -31,7 +32,7 @@ sample_and_hold sah
 (
   .clk(clk),
   .reset(reset),
-  .sys_clk(clk),
+  .sys_clk(sys_clk),
   .input_voltage_real(input_voltage_real),
   .output_voltage_real(p_voltage_real),
   .input_control_digital(input_hold_digital)
@@ -44,7 +45,7 @@ successive_approximation_register #(
     .quantized_voltage(output_result_digital),
     .conduct_comparison(input_hold_digital),
     .eoc(eoc), 
-    .clk(clk), 
+    .clk(sys_clk), 
     .reset(reset) 
 );
 
@@ -59,7 +60,7 @@ digital_to_analog_converter DAC_instance (
 comparator comparator_instance (
     .clk(clk),              
     .reset(reset),            
-    .sys_clk(clk),          
+    .sys_clk(sys_clk),          
     .p_voltage_real(p_voltage_real),   
     .n_voltage_real(n_voltage_real),   
     .out_digital(comparator_output_digital)       

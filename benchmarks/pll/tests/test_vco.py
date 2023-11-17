@@ -45,7 +45,7 @@ def simulate_pymtl_model(rtlblk, cycles,timestep = 1e-4):
 
    
 
-def test_real_translation(cmdline_opts):
+def test_real_translation(cmdline_opts, plot):
     timestep = 5e-5
 
     real_xs, real_vs, real_ts = simulate_real_model(vco_ams_block_real, 4*round(1/timestep),timestep=timestep)
@@ -57,8 +57,8 @@ def test_real_translation(cmdline_opts):
     rtl_xs, rtl_ts = simulate_pymtl_model(rtl_block, 4*round(1/timestep),timestep=timestep)
     mse = ((np.asarray(real_xs) - np.asarray(rtl_xs))**2).mean()
     
-    failed = False
-    if(mse > 0.1 or True):
+    failed = mse > 0.1 
+    if(failed or plot):
         failed = True
         plt.plot(real_ts,real_xs, label='xs')
         plt.plot(real_ts,real_vs, label='vs')
@@ -73,7 +73,7 @@ def test_real_translation(cmdline_opts):
         plt.clf()
     assert not failed, "[ERROR] VCO BASIC TEST FAILED, MSE = {}: WAVEFORMS IN ./ FOLDER".format(mse) 
 
-def test_stable_precision(cmdline_opts):
+def test_stable_precision(cmdline_opts, plot):
     timestep = 5e-5
     num_cycles = 1e6
     rtl_block.generate_verilog_src("./")
@@ -83,9 +83,8 @@ def test_stable_precision(cmdline_opts):
     rtl_xs, rtl_ts = simulate_pymtl_model(rtl_block, round(num_cycles),timestep=timestep)
 
     greatest = max(rtl_xs)
-    failed = False
-    if(greatest > 3.4 or True):
-        failed = True
+    failed = greatest > 3.4
+    if(failed or plot):
         plt.plot(rtl_ts,rtl_xs, label='xs')
         plt.title("RTL Model")
         plt.legend(loc='best')
@@ -93,7 +92,7 @@ def test_stable_precision(cmdline_opts):
         plt.clf()
     assert not failed, "[ERROR] VCO PRECISION TEST FAILED, GREATEST ACHIEVED VALUE IN {} CYCLES = {} > 3.3: WAVEFORMS IN ./ FOLDER".format(num_cycles, greatest) 
 
-def test_thrash(cmdline_opts):
+def test_thrash(cmdline_opts, plot):
     def simulate_pymtl_model(rtlblk, cycles,timestep = 1e-4):
         outs = []
         vs = []
@@ -121,9 +120,8 @@ def test_thrash(cmdline_opts):
     rtl_xs, rtl_ts, rtl_in = simulate_pymtl_model(rtl_block, round(num_cycles),timestep=timestep)
 
     greatest = max(rtl_xs)
-    failed = False
-    if(greatest > 3.4 or True):
-        failed = True
+    failed = greatest > 3.4
+    if(failed or plot):
         plt.plot(rtl_ts,rtl_xs, label='xs')
         plt.plot(rtl_ts,rtl_in, label='input_voltage_real')
         plt.title("RTL Model")
