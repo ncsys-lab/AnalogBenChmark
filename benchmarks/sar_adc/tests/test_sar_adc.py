@@ -123,15 +123,18 @@ def test_sar_adc_thrash_input(voltage,cmdline_opts,plot):
         volt_in = []
         sys_clk_state = 0
         div = 2
-        for i in range(12*div):
+        for i in range(12*div - 1):
             sys_clk_state = i_to_clk(i,sys_clk_state,div=div)
             if( i < 2 *div):
                 randvolt = random.uniform(0,3.3)
                 eoc, quantvolt = sar_sim_tick(dut,Bits(10,v=to_bits(randvolt)), 0x0, sys_clk_state)
                 volt_in.append(randvolt)
             elif(i == 2*div):
+                eoc, quantvolt = sar_sim_tick(dut,Bits(10,v=to_bits(voltage)), 0x0, sys_clk_state)
+                volt_in.append(voltage)
                 eoc, quantvolt = sar_sim_tick(dut,Bits(10,v=to_bits(voltage)), 0x1, sys_clk_state)
                 volt_in.append(voltage)
+                vec.append(3.3 * int(quantvolt) / (2**10))
             else:
                 randvolt = random.uniform(0,3.3)
                 eoc, quantvolt = sar_sim_tick(dut,Bits(10,v=to_bits(randvolt)),0x1, sys_clk_state)
