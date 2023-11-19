@@ -82,7 +82,6 @@ def test_sar_adc_basic(voltage,cmdline_opts,plot):
         assert eoc == Bits(1,v=1) and diff < delta, "[FAILED] difference > delta {} > {}".format(diff, delta)
 
 
-
     run_test(voltage)
 
 @pytest.mark.parametrize("voltage,",[1.6,2.7,0.5,3.29,0.1])
@@ -167,4 +166,59 @@ def test_sar_adc_thrash_input(voltage,cmdline_opts,plot):
 
 
     run_test(voltage)
+
+
+@pytest.mark.parametrize("voltage,",[1.6,2.7,0.5,3.29,0.1])
+def test_sar_adc_simple(voltage,cmdline_opts,plot):
+    def sar_sim_tick(dut, input_voltage, input_control,sys_clk):
+        dut.input_voltage_real @= input_voltage
+        dut.input_hold_digital @= input_control
+        dut.sys_clk @= sys_clk
+        eoc = copy.deepcopy(dut.eoc)
+        output_result = copy.deepcopy(dut.output_result_digital)
+
+        dut.sim_tick()
+        return eoc, output_result
+    
+    
+    def i_to_clk(i,sys_clk_state,div=2):
+        if(i == 0):
+            return sys_clk_state
+        if sys_clk_state == 0:
+            if (i % (div//2) == 0):
+                return 1
+            else:
+                return 0
+        else:
+            if (i % (div) == 0):
+
+                return 0
+            else:
+                return 1
+            
+    def to_bits(v):
+        return Bits(10,v=dac_ams_block.nodes['transparent'].block.get_var('input_voltage_real').type.from_real(v))
+
+    sar = sar_adc()
+    dut = config_model_with_cmdline_opts(sar, cmdline_opts,duts=[])
+    dut.apply( DefaultPassGroup(linetrace = True))
+
+    dut.sim_reset()
+
+    sys_clk_state = 0
+    clk_div = 200
+
+    for i in range(18 * clk_div):
+        sys_clk_state = i_to_clk(i, sys_clk_state, clk_div)
+        if(i < 3):
+            eoc, quantvolt = sar_sim_tick(dut, to_bits(voltage), 0x0, sys_clk_state)
+        else:
+            eoc, quantvolt = sar_sim_tick(dut, to_bits(voltage), 0x1, sys_clk_state)
+
+    diff = abs(voltage - (3.3 * int(quantvolt) / (2**10)))
+    delta = ((100/(2**10)))#Relative Precision of (1/0.01) * quantization error (1/2**10)
+
+
+    assert eoc == Bits(1,v=1) and diff < delta, "[FAILED] difference > delta {} > {}".format(diff, delta)
+
 
