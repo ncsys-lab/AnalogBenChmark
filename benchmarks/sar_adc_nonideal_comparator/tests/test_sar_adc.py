@@ -1,8 +1,8 @@
 import random
 from pymtl3 import *
 from pymtl3.stdlib.test_utils import run_test_vector_sim, config_model_with_cmdline_opts
-from sar_adc.sar_adc import sar_adc
-from sar_adc.model_generators.sample_and_hold import *
+from sar_adc_nonideal_comparator.sar_adc import sar_adc
+from sar_adc_nonideal_comparator.model_generators.sample_and_hold import *
 import pytest
 import copy
 import numpy as np
@@ -24,6 +24,8 @@ def test_sar_adc_basic(voltage,cmdline_opts,plot):
     
     
     def i_to_clk(i,sys_clk_state,div=2):
+        if(i == 0):
+            return sys_clk_state
         if sys_clk_state == 0:
             if (i % (div//2) == 0):
                 return 1
@@ -52,10 +54,12 @@ def test_sar_adc_basic(voltage,cmdline_opts,plot):
 
         vec = []
         sys_clk_state = 0
-        div = 2
-        for i in range(13 *div):
-            sys_clk_state = i_to_clk(i,sys_clk_state,div=2)
-            if(i < 3*div):
+        sys_clk_vec = []
+        div = 200
+        for i in range(18 * div):
+            sys_clk_state = i_to_clk(i,sys_clk_state,div=div)
+            sys_clk_vec.append(sys_clk_state)
+            if(i < 3):
             
                 eoc, quantvolt = sar_sim_tick(dut,Bits(10,v=to_bits(voltage)), 0x0,sys_clk_state)
                 vec.append(3.3 * int(quantvolt) / (2**10))
@@ -63,7 +67,7 @@ def test_sar_adc_basic(voltage,cmdline_opts,plot):
                 eoc, quantvolt = sar_sim_tick(dut,Bits(10,v=to_bits(voltage)),0x1,sys_clk_state)
                 vec.append(3.3 * int(quantvolt) / (2**10))
         diff = abs(voltage - (3.3 * int(quantvolt) / (2**10)))
-        delta = ((10/(2**10)))
+        delta = ((100/(2**10)))#Relative Precision of (1/0.01) * quantization error (1/2**10)
 
 
         if(plot):
@@ -122,16 +126,20 @@ def test_sar_adc_thrash_input(voltage,cmdline_opts,plot):
         vec = []
         volt_in = []
         sys_clk_state = 0
-        div = 2
-        for i in range(12*div - 1):
+        sys_clk_vec = []
+        div = 200
+        for i in range(19 * div):
             sys_clk_state = i_to_clk(i,sys_clk_state,div=div)
-            if( i < 2 *div):
+            sys_clk_vec.append(sys_clk_state)
+            if( i < 2):
                 randvolt = random.uniform(0,3.3)
                 eoc, quantvolt = sar_sim_tick(dut,Bits(10,v=to_bits(randvolt)), 0x0, sys_clk_state)
                 volt_in.append(randvolt)
-            elif(i == 2*div):
+            elif(i == 2):
                 eoc, quantvolt = sar_sim_tick(dut,Bits(10,v=to_bits(voltage)), 0x0, sys_clk_state)
                 volt_in.append(voltage)
+                sys_clk_state = i_to_clk(i,sys_clk_state,div=div)
+                sys_clk_vec.append(sys_clk_state)
                 eoc, quantvolt = sar_sim_tick(dut,Bits(10,v=to_bits(voltage)), 0x1, sys_clk_state)
                 volt_in.append(voltage)
                 vec.append(3.3 * int(quantvolt) / (2**10))
@@ -142,7 +150,7 @@ def test_sar_adc_thrash_input(voltage,cmdline_opts,plot):
             vec.append(3.3 * int(quantvolt) / (2**10))
         
         diff = abs(voltage - (3.3 * int(quantvolt) / (2**10)))
-        delta = ((10/(2**10)))
+        delta = ((100/(2**10)))
 
         if(plot):
             plt.plot(range(len(vec)),vec, label='digital output voltage')

@@ -9,7 +9,7 @@ import sys
 import copy
 
 try:
-    from pll.model_generators.loop_filter import Loop_Filter_Generator
+    from pll_ideal.model_generators.loop_filter import Loop_Filter_Generator
 except:
     from loop_filter import Loop_Filter_Generator
 
@@ -28,7 +28,7 @@ class VCO_Generator:
         rest_freq = vco.decl_param("rest_frec",Constant(0.1))
 
         w = vco.decl_var("input_voltage_real", kind=blocklib.VarKind.Input, type=Loop_Filter_Generator.output_voltage_real_type) #total kludge to get the product lower above 0.00
-        x = vco.decl_var("x", kind=blocklib.VarKind.StateVar, type=RealType(lower=-3.3*scf,upper=3.3*scf,prec=rel_prec))
+        x = vco.decl_var("x", kind=blocklib.VarKisnd.StateVar, type=RealType(lower=-3.3*scf,upper=3.3*scf,prec=rel_prec))
         v = vco.decl_var("v", kind=blocklib.VarKind.StateVar, type=RealType(lower=-3.3*scf,upper=3.3*scf,prec=rel_prec)) 
         out = vco.decl_var("output_clock_real", kind=blocklib.VarKind.Output, type=x.type)
 

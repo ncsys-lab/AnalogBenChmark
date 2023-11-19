@@ -1,7 +1,7 @@
 import random
 from pymtl3 import *
 from pymtl3.stdlib.test_utils import run_test_vector_sim, config_model_with_cmdline_opts
-from pll.model_generators.voltage_controlled_oscillator import *
+from pll_ideal.model_generators.voltage_controlled_oscillator import *
 import matplotlib.pyplot as plt
 import numpy as np
 

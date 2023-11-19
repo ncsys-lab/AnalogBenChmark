@@ -1,7 +1,7 @@
 import random
 from pymtl3 import *
 from pymtl3.stdlib.test_utils import run_test_vector_sim, config_model_with_cmdline_opts
-from pll.phased_locked_loop import phase_locked_loop
+from pll_ideal.phased_locked_loop import phase_locked_loop
 
 def test_pll(cmdline_opts):
     multiplier = phase_locked_loop()
